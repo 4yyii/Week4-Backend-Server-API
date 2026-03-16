@@ -2,14 +2,14 @@
 
 1. Create a new project
 
-```json
+```bash
 mkdir <name-directory>
 cd <name-directory>
 ```
 
 Initialize a TypeScript project:
 
-```json
+```bash
 npm init -y
 npm install typescript tsx @types/node --save-dev
 npx tsc --init
@@ -17,7 +17,7 @@ npx tsc --init
 
 2. Install required dependencies
 
-```json
+```bash
 npm install prisma @types/pg --save-dev
 npm install @prisma/client @prisma/adapter-pg pg dotenv
 ```
@@ -45,14 +45,14 @@ Update package.json
 4. Initialize Prisma ORM and create a Prisma Postgres Database
 
 Set up your Prisma ORM project by creating your Prisma Schema file with the following command:
-```json
+```bash
 npx prisma init --db --output ../generated/prisma
 ```
 
 The generated prisma.config.ts file looks like this:
 ```bash
-import "dotenv/config";
-import { defineConfig, env } from "prisma/config";
+import "dotenv/config"
+import { defineConfig, env } from "prisma/config"
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
@@ -62,7 +62,7 @@ export default defineConfig({
   datasource: {
     url: env("DATABASE_URL"),
   },
-});
+})
 ```
 
 The generated schema uses the ESM-first prisma-client generator with a custom output path:
@@ -110,12 +110,12 @@ model Post {
 6. Create and apply your first migration
 
 Create your first migration to set up the database tables:
-```json
+```bash
 npx prisma migrate dev --name init
 ```
 
 Now run the following command to generate the Prisma Client:
-```json
+```bash
 npx prisma generate
 ```
 
@@ -137,6 +137,6 @@ export { prisma };
 
 8. Explore your data with Prisma Studio
 
-```json
+```bash
 npx prisma studio
 ```
