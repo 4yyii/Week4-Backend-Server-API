@@ -201,6 +201,10 @@ Response Body (Failed) :
 
 ```json
 {
-    "errors" : "Unauthorized, ..."
+    "status": "Failed",
+    "message": "Validation Error",
+    "errors": {
+        "message": "Unauthorized, ..."
+    }
 }
 ```
