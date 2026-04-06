@@ -1,23 +1,15 @@
-import { ZodType } from "zod";
-import * as z from "zod";
+import { z, ZodType } from "zod";
 
 export class UserValidation {
+  public static readonly REGISTER: ZodType = z.object({
+    name: z.string().min(1).max(50),
+    email: z.string().min(1).max(30).optional(),
+    phone: z.string().min(1).max(20),
+  });
 
-    public static readonly REGISTER : ZodType = z.object({
-        username: z.string().min(1).max(100),
-        name: z.string().min(1).max(100),
-        password: z.string().min(1).max(100)
-    });
-
-    public static readonly LOGIN : ZodType = z.object({
-        username: z.string().min(1).max(100),
-        password: z.string().min(1).max(100)
-    });
-
-    public static readonly UPDATE : ZodType = z.object({
-        username: z.string().min(1).max(100).optional(),
-        name: z.string().min(1).max(100).optional(),
-        password: z.string().min(1).max(100).optional()
-    });
-
+  public static readonly UPDATE: ZodType = z.object({
+    name: z.string().min(1).max(50),
+    email: z.string().min(1).max(30).optional(),
+    phone: z.string().min(1).max(20).optional(),
+  });
 }

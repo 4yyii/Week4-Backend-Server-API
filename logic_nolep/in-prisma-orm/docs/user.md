@@ -2,183 +2,176 @@
 
 ## Register User
 
-Endpoint : POST /api/users
+Endpoint : POST /api/user/register
 
 Request Body :
 
-```json
+```
 {
-    "username" : "ayi",
-    "password" : "secret",
-    "name" : "Ayi Khannedy" 
+    "name" : "ayi",
+    "email" : "ayi@gmail.com",
+    "phone" : "08123456"
 }
 ```
 
-Response Body (Success) : 
+Response Body (Success) :
 
-```json
+```
 {
-    "status" : "Success",
-    "message" : "Register success, welcome ayi",
-    "data" : {
-        "username" : "ayi",
-        "name" : "Ayi Khannedy"
+    "message": "Register success, Welcome ayi",
+    "data": {
+        "id": 3,
+        "name": "ayi",
+        "email": "ayi@gmail.com",
+        "phone": "08123456"
     }
 }
 ```
 
 Response Body (Failed) :
 
-```json
+```
 {
-    "status" : "Failed",
-    "message" : "Validation Error",
-    "errors" : {
-        "username": "Too small: expected string to have >=1 characters"
-    } 
+    "message": "Validation Error",
+    "errors": {
+        "name": "Name already exist"
+    }
 }
 ```
 
-## Login User
+## Get User By Id
 
+Endpoint : GET /api/users/:userId
 
-Endpoint : POST /api/users/login
+Response Body (Success) :
 
-Request Body :
-
-```json
-{
-    "username" : "ayi",
-    "password" : "secret"
-}
 ```
-
-Response Body (Success) : 
-
-```json
 {
-    "status" : "Success",
-    "message" : "Login success, welcome ayi",
-    "data" : {
-        "name" : "Ayi Khannedy",
-        "username" : "ayi",
-        "token" : "jwt"
+    "data": {
+        "id": 4,
+        "name": "ayi",
+        "email": "ayi@gmail.com",
+        "phone": "08123456",
+        "todos": [
+            {
+                "id": 3,
+                "title": "Reading a book",
+                "description": "Read The Intelligent Investor book By Benjamin Graham",
+                "status": "ACTIVE"
+            },
+            {
+                "id": 4,
+                "title": "Reading a book",
+                "description": "Read The Intelligent Investor book By Benjamin Graham",
+                "status": "ACTIVE"
+            }
+        ]
     }
 }
 ```
 
 Response Body (Failed) :
 
-```json
+```
 {
-    "status" : "Failed",
-    "message" : "Validation Error",
-    "errors" : {
-        "message": "Username or password wrong, ..."
+    "message": "Not found",
+    "errors": {
+        "user": "User with id 2 not found"
     }
 }
 ```
 
 ## Get User
 
+Endpoint : GET /api/users
 
-Endpoint : GET /api/users/current
+Response Body (Success) :
 
-Request Header : 
-- X-API-TOKEN : token
-
-Response Body (Success) : 
-
-```json
+```
 {
-    "status" : "Success",
-    "message" : "Get user success, here the data",
-    "data" : {
-        "username" : "ayi",
-        "name" : "Ayi Khannedy"
-    }
+    "data": [
+        {
+            "id": 3,
+            "name": "ayi",
+            "email": "ayi@gmail.com",
+            "phone": "08123456"
+        },
+        {
+            "id": 4,
+            "name": "ayi",
+            "email": "ayi@gmail.com",
+            "phone": "08123456"
+        }
+    ]
 }
 ```
 
 Response Body (Failed) :
 
-```json
+```
 {
-    "status" : "Failed",
-    "message" : "Validation Error",
-    "errors" : {
-        "message" : "Unauthorized, ..."
-    }
+    "message": "Internal Server Error"
 }
 ```
 
 ## Update User
 
-
-Endpoint : PATCH /api/users/current
-
-Request Header : 
-- X-API-TOKEN : token
+Endpoint : PATCH /api/user/:userId
 
 Request Body :
 
-```json
+```
 {
-    "password" : "secret",
-    "name" : "Ayi Khannedy",
-    "username" : "ayi" 
+    "name": "ayi",
+    "email": "ayi@gmail.com",
+    "phone": "08123456"
 }
 ```
 
-Response Body (Success) : 
+Response Body (Success) :
 
-```json
+```
 {
-    "status" : "Success",
-    "message" : "Update user success, here the data",
-    "data" : {
-        "username" : "Ayi",
-        "name" : "Ayi Khannedy"
+    "message": "Update user success with id 3",
+    "data": {
+        "id": 3,
+        "name": "ayi",
+        "email": "ayi@gmail.com",
+        "phone": "08123456"
     }
 }
 ```
 
 Response Body (Failed) :
 
-```json
+```
 {
-    "status" : "Failed",
-    "message" : "Validation Error",
-    "errors" : {
-        "message" : "Unauthorized, ..."
+    "message": "Not found",
+    "errors": {
+        "user": "User with id 4 not found"
     }
 }
 ```
 
-## Logout User
+## Delete User
 
-Endpoint : DELETE /api/users/current
+Endpoint : DELETE /api/user/:userId
 
-Request Header : 
-- X-API-TOKEN : token
+Response Body (Success) :
 
-Response Body (Success) : 
-
-```json
+```
 {
-    "status" : "Success",
-    "message" : "Logout success"
+    "message": "Delete user success with id 3"
 }
 ```
 
 Response Body (Failed) :
 
-```json
+```
 {
-    "status" : "Failed",
-    "message" : "Validation Error",
-    "errors" : {
-        "message" : "Unauthorized, ..."
+    "message": "Not found",
+    "errors": {
+        "user": "User with id 3 not found"
     }
 }
 ```

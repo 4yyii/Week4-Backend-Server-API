@@ -1,15 +1,13 @@
 import express from "express";
-import { publicRouter } from "../routes/public.api";
 import { errorMiddleware } from "../middleware/error.middleware";
-import { apiRouter } from "../routes/api";
+import { apiRouter } from "../routes/api.route";
 
 export const web = express();
 
 web.use(express.json());
 web.get("/", (req, res) => {
-    res.send("HI!")
+  res.send("Hi!");
 });
 
-web.use(publicRouter);
-web.use(apiRouter)
+web.use(apiRouter);
 web.use(errorMiddleware);

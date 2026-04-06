@@ -13,40 +13,29 @@ datasource db {
 }
 
 model User {
-  username String @id @db.VarChar(100)
-  password String @db.VarChar(100)
-  name String @db.VarChar(100)
-  token String? @db.Text
+  id    Int     @id @default(autoincrement())
+  name  String  @db.VarChar(50)
+  email String? @db.VarChar(30)
+  phone String  @db.VarChar(20)
 
-  contacts Contact[]
+  todos Todo[]
 
   @@map("users")
 }
 
-model Contact {
-  id Int @id @default(autoincrement())
-  first_name String @db.VarChar(100)
-  last_name String? @db.VarChar(100)
-  email String? @db.VarChar(100)
-  phone String? @db.VarChar(20)
-  username String @db.VarChar(100)
+model Todo {
+  id          Int     @id @default(autoincrement())
+  title       String  @db.VarChar(50)
+  description String  @db.Text
+  status      Status
+  userId      Int
 
-  user User @relation(fields: [username], references: [username], onDelete: Cascade)
-  addresses Address[]
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("contacts")
+  @@map("todos")
 }
 
-model Address {
-  id Int @id @default(autoincrement())
-  street String? @db.VarChar(255)
-  city String? @db.VarChar(100)
-  province String? @db.VarChar(100)
-  country String @db.VarChar(100)
-  postal_code String @db.VarChar(10)
-  contact_id Int
-
-  contact Contact @relation(fields: [contact_id], references: [id], onDelete: Cascade)
-
-  @@map("addresses")
+enum Status {
+  FINISH
+  ACTIVE
 }

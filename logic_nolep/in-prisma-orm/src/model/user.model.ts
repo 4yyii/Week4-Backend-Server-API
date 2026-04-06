@@ -1,31 +1,41 @@
-import type { User } from "../../generated/prisma/client";
+import { User } from "../../generated/prisma/client";
+import { TodoResponse, toTodoResponse } from "./todo.model";
 
 export type UserResponse = {
-    username: string;
-    name: string;
-    token?: string;
-}
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+};
 
 export type CreateUserRequest = {
-    username: string;
-    name: string;
-    password: string;
-}
-
-export type LoginUserRequest = {
-    username: string;
-    password: string
-}
+  name: string;
+  email?: string;
+  phone: string;
+};
 
 export type UpdateUserRequest = {
-    username?: string;
-    name?: string;
-    password?: string
+  name: string;
+  email?: string;
+  phone?: string;
+};
+
+export function toUserResponse(user: User): UserResponse {
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email ?? "",
+    phone: user.phone,
+  };
 }
 
-export function toUserResponse(user: User) : UserResponse {
-    return {
-        name: user.name,
-        username: user.username
-    }
+export type UserWithTodoResponse = UserResponse & {
+  todos: TodoResponse[];
+};
+
+export function toUserWithTodoResponse(user: any): UserWithTodoResponse {
+  return {
+    ...toUserResponse(user),
+    todos: user.todos.map((todo: any) => toTodoResponse(todo)),
+  };
 }
