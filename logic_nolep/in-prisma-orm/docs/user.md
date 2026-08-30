@@ -2,25 +2,25 @@
 
 ## Register User
 
-Endpoint : POST /api/user/register
+Endpoint : POST `/api/user/register`
 
 Request Body :
 
-```
+```json
 {
-    "name" : "ayi",
-    "email" : "ayi@gmail.com",
-    "phone" : "08123456"
+    "name": "ayi",
+    "email": "ayi@gmail.com",
+    "phone": "08123456"
 }
 ```
 
-Response Body (Success) :
+Response Body (Success - 201 Created) :
 
-```
+```json
 {
     "message": "Register success, Welcome ayi",
     "data": {
-        "id": 3,
+        "id": 1,
         "name": "ayi",
         "email": "ayi@gmail.com",
         "phone": "08123456"
@@ -28,9 +28,9 @@ Response Body (Success) :
 }
 ```
 
-Response Body (Failed) :
+Response Body (Failed - 400 Bad Request) :
 
-```
+```json
 {
     "message": "Validation Error",
     "errors": {
@@ -39,28 +39,24 @@ Response Body (Failed) :
 }
 ```
 
+---
+
 ## Get User By Id
 
-Endpoint : GET /api/users/:userId
+Endpoint : GET `/api/users/:userId`
 
-Response Body (Success) :
+Response Body (Success - 201 Created) :
 
-```
+```json
 {
     "data": {
-        "id": 4,
+        "id": 1,
         "name": "ayi",
         "email": "ayi@gmail.com",
         "phone": "08123456",
         "todos": [
             {
-                "id": 3,
-                "title": "Reading a book",
-                "description": "Read The Intelligent Investor book By Benjamin Graham",
-                "status": "ACTIVE"
-            },
-            {
-                "id": 4,
+                "id": 1,
                 "title": "Reading a book",
                 "description": "Read The Intelligent Investor book By Benjamin Graham",
                 "status": "ACTIVE"
@@ -70,34 +66,30 @@ Response Body (Success) :
 }
 ```
 
-Response Body (Failed) :
+Response Body (Failed - 404 Not Found) :
 
-```
+```json
 {
     "message": "Not found",
     "errors": {
-        "user": "User with id 2 not found"
+        "user": "User with id 1 not found"
     }
 }
 ```
 
-## Get User
+---
 
-Endpoint : GET /api/users
+## Get All Users
 
-Response Body (Success) :
+Endpoint : GET `/api/users`
 
-```
+Response Body (Success - 201 Created) :
+
+```json
 {
     "data": [
         {
-            "id": 3,
-            "name": "ayi",
-            "email": "ayi@gmail.com",
-            "phone": "08123456"
-        },
-        {
-            "id": 4,
+            "id": 1,
             "name": "ayi",
             "email": "ayi@gmail.com",
             "phone": "08123456"
@@ -106,72 +98,76 @@ Response Body (Success) :
 }
 ```
 
-Response Body (Failed) :
+Response Body (Failed - 500 Internal Server Error) :
 
-```
+```json
 {
     "message": "Internal Server Error"
 }
 ```
 
+---
+
 ## Update User
 
-Endpoint : PATCH /api/user/:userId
+Endpoint : PATCH `/api/user/:userId`
 
 Request Body :
 
-```
+```json
 {
-    "name": "ayi",
+    "name": "ayi updated",
     "email": "ayi@gmail.com",
-    "phone": "08123456"
+    "phone": "08123456789"
 }
 ```
 
-Response Body (Success) :
+Response Body (Success - 201 Created) :
 
-```
+```json
 {
-    "message": "Update user success with id 3",
+    "message": "Update user success with id 1",
     "data": {
-        "id": 3,
-        "name": "ayi",
+        "id": 1,
+        "name": "ayi updated",
         "email": "ayi@gmail.com",
-        "phone": "08123456"
+        "phone": "08123456789"
     }
 }
 ```
 
-Response Body (Failed) :
+Response Body (Failed - 404 Not Found) :
 
-```
+```json
 {
     "message": "Not found",
     "errors": {
-        "user": "User with id 4 not found"
+        "user": "User with id 1 not found"
     }
 }
 ```
+
+---
 
 ## Delete User
 
-Endpoint : DELETE /api/user/:userId
+Endpoint : DELETE `/api/user/:userId`
 
-Response Body (Success) :
+Response Body (Success - 201 Created) :
 
-```
+```json
 {
-    "message": "Delete user success with id 3"
+    "message": "Delete user success with id 1"
 }
 ```
 
-Response Body (Failed) :
+Response Body (Failed - 404 Not Found) :
 
-```
+```json
 {
     "message": "Not found",
     "errors": {
-        "user": "User with id 3 not found"
+        "user": "User with id 1 not found"
     }
 }
 ```

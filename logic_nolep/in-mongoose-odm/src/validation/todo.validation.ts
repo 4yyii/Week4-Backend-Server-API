@@ -6,6 +6,7 @@ export class TodoValidation {
     title: z.string().min(1).max(100),
     description: z.string().max(500).optional(),
     status: z.enum(["Pending", "In Progress", "Completed"]).optional().default("Pending"),
+    userId: z.string().min(1).optional(),
   });
 
   public static readonly UPDATE: ZodType = z.object({

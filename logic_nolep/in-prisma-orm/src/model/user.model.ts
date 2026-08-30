@@ -1,5 +1,8 @@
-import { User } from "../../generated/prisma/client";
+import { users } from "../db/schema";
 import { TodoResponse, toTodoResponse } from "./todo.model";
+
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
 
 export type UserResponse = {
   id: number;
@@ -36,6 +39,6 @@ export type UserWithTodoResponse = UserResponse & {
 export function toUserWithTodoResponse(user: any): UserWithTodoResponse {
   return {
     ...toUserResponse(user),
-    todos: user.todos.map((todo: any) => toTodoResponse(todo)),
+    todos: user.todos ? user.todos.map((todo: any) => toTodoResponse(todo)) : [],
   };
 }

@@ -1,4 +1,6 @@
-import { prisma } from "../application/prisma";
+import { db } from "../application/database";
+import { users } from "../db/schema";
+import { eq } from "drizzle-orm";
 import { ResponseError } from "../error/response.error";
 import {
   type CreateUserRequest,
@@ -6,26 +8,20 @@ import {
   toUserWithTodoResponse,
   type UpdateUserRequest,
   type UserResponse,
-  UserWithTodoResponse,
+  type UserWithTodoResponse,
 } from "../model/user.model";
 import { UserValidation } from "../validation/user.validation";
 import { Validation } from "../validation/validation";
 
 export class UserService {
-  private static async checkUserIfExist<K>(key: string, value: K) {
-    return await prisma.user.count({
-      where: {
-        [key]: value,
-      },
-    });
+  private static async checkUserIfExistByName(name: string): Promise<boolean> {
+    const found = await db.select().from(users).where(eq(users.name, name));
+    return found.length > 0;
   }
 
-  private static async checkUserById(userId: number) {
-    return await prisma.user.count({
-      where: {
-        id: userId,
-      },
-    });
+  private static async checkUserById(userId: number): Promise<boolean> {
+    const found = await db.select().from(users).where(eq(users.id, userId));
+    return found.length > 0;
   }
 
   public static async register(
@@ -36,20 +32,17 @@ export class UserService {
       request,
     );
 
-    const totalUserWithSameName = await this.checkUserIfExist<string>(
-      "name",
-      request.name,
-    );
-
-    if (totalUserWithSameName != 0) {
+    const nameExists = await this.checkUserIfExistByName(registerRequest.name);
+    if (nameExists) {
       throw new ResponseError(400, "Validation Error", {
         name: "Name already exist",
       });
     }
 
-    const user = await prisma.user.create({
-      data: registerRequest,
-    });
+    const [user] = await db.insert(users).values(registerRequest).returning();
+    if (!user) {
+      throw new ResponseError(500, "Failed to register user");
+    }
 
     return toUserResponse(user);
   }
@@ -59,7 +52,7 @@ export class UserService {
     request: UpdateUserRequest,
   ): Promise<UserResponse> {
     const updateRequest = Validation.validate(UserValidation.UPDATE, request);
-    const isUserExist = await this.checkUserIfExist<number>("id", userId);
+    const isUserExist = await this.checkUserById(userId);
 
     if (!isUserExist) {
       throw new ResponseError(404, "Not found", {
@@ -67,18 +60,21 @@ export class UserService {
       });
     }
 
-    const user = await prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: updateRequest,
-    });
+    const [user] = await db
+      .update(users)
+      .set(updateRequest)
+      .where(eq(users.id, userId))
+      .returning();
+
+    if (!user) {
+      throw new ResponseError(500, "Failed to update user");
+    }
 
     return toUserResponse(user);
   }
 
   public static async delete(userId: number) {
-    const isUserExist = await this.checkUserIfExist<number>("id", userId);
+    const isUserExist = await this.checkUserById(userId);
 
     if (!isUserExist) {
       throw new ResponseError(404, "Not found", {
@@ -86,28 +82,29 @@ export class UserService {
       });
     }
 
-    const user = await prisma.user.delete({
-      where: {
-        id: userId,
-      },
-    });
+    const [user] = await db
+      .delete(users)
+      .where(eq(users.id, userId))
+      .returning();
+
+    if (!user) {
+      throw new ResponseError(500, "Failed to delete user");
+    }
 
     return toUserResponse(user);
   }
 
   public static async findUsers(): Promise<UserResponse[]> {
-    const users = await prisma.user.findMany();
-    return users.map((user) => toUserResponse(user));
+    const allUsers = await db.select().from(users);
+    return allUsers.map((user) => toUserResponse(user));
   }
 
   public static async findUserById(
     userId: number,
   ): Promise<UserWithTodoResponse> {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-      include: {
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+      with: {
         todos: true,
       },
     });

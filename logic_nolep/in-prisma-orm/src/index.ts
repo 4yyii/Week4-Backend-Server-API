@@ -1,16 +1,16 @@
 import { web } from "./application/web";
-import { prisma } from "./application/prisma";
+import { db } from "./application/database";
 import "dotenv/config";
 import { Server } from "node:http";
 
 let server: Server;
-const port = process.env.DB_PORT || 3000;
+const port = process.env.PORT || 3000;
 
-if(prisma) {
-    console.log("Database connected");
-    server = web.listen(port, () => {
-        console.log(`app running at http://localhost:${port}`)
-    });
+if (db) {
+  console.log("Database connected");
+  server = web.listen(port, () => {
+    console.log(`app running at http://localhost:${port}`);
+  });
 }
 
 const exitHandler = () => {

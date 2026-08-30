@@ -4,9 +4,10 @@ import { Server } from "node:http";
 import mongoose from "mongoose";
 
 let server: Server;
-const port = process.env.DB_PORT || 3000;
+const port = process.env.PORT || process.env.DB_PORT || 3000;
+const mongoUri = process.env.DATABASE_URL || "mongodb://127.0.0.1:27017/fancy_todo_odm";
 
-mongoose.connect(process.env.DATABASE_URL!).then(() => {
+mongoose.connect(mongoUri).then(() => {
   console.log('Connected to MongoDB')
   server = web.listen(port, () => {
     console.log(`app running at http://localhost:${port}`);

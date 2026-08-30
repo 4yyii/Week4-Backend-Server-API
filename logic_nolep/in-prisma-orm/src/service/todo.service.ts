@@ -1,4 +1,6 @@
-import { prisma } from "../application/prisma";
+import { db } from "../application/database";
+import { todos } from "../db/schema";
+import { and, eq } from "drizzle-orm";
 import { ResponseError } from "../error/response.error";
 import {
   CreateTodoRequest,
@@ -12,10 +14,15 @@ import { TodoValidation } from "../validation/todo.validation";
 import { Validation } from "../validation/validation";
 
 export class TodoService {
-  private static async checkTodoIfExist<K>(clause: Record<string, K>) {
-    return await prisma.todo.count({
-      where: clause,
-    });
+  private static async checkTodoIfExist(
+    todoId: number,
+    userId: number,
+  ): Promise<boolean> {
+    const found = await db
+      .select()
+      .from(todos)
+      .where(and(eq(todos.id, todoId), eq(todos.userId, userId)));
+    return found.length > 0;
   }
 
   public static async createTodo(
@@ -26,14 +33,19 @@ export class TodoService {
       TodoValidation.CREATE,
       request,
     );
-    const todo = await prisma.todo.create({
-      data: {
+    const [todo] = await db
+      .insert(todos)
+      .values({
         title: createTodoRequest.title,
         description: createTodoRequest.description,
         status: createTodoRequest.status,
         userId: userId,
-      },
-    });
+      })
+      .returning();
+
+    if (!todo) {
+      throw new ResponseError(500, "Failed to create todo");
+    }
 
     return toTodoResponse(todo);
   }
@@ -48,10 +60,7 @@ export class TodoService {
       request,
     );
 
-    const isTodoExist = await this.checkTodoIfExist<number>({
-      id: todoId,
-      userId: userId,
-    });
+    const isTodoExist = await this.checkTodoIfExist(todoId, userId);
 
     if (!isTodoExist) {
       throw new ResponseError(404, "Not found", {
@@ -59,22 +68,21 @@ export class TodoService {
       });
     }
 
-    const todo = await prisma.todo.update({
-      where: {
-        id: todoId,
-        userId: userId,
-      },
-      data: updateTodoRequest,
-    });
+    const [todo] = await db
+      .update(todos)
+      .set(updateTodoRequest)
+      .where(and(eq(todos.id, todoId), eq(todos.userId, userId)))
+      .returning();
+
+    if (!todo) {
+      throw new ResponseError(500, "Failed to update todo");
+    }
 
     return toTodoResponse(todo);
   }
 
   public static async deleteTodo(userId: number, todoId: number) {
-    const isTodoExist = await this.checkTodoIfExist<number>({
-      id: todoId,
-      userId: userId,
-    });
+    const isTodoExist = await this.checkTodoIfExist(todoId, userId);
 
     if (!isTodoExist) {
       throw new ResponseError(404, "Not found", {
@@ -82,28 +90,30 @@ export class TodoService {
       });
     }
 
-    const todo = await prisma.todo.delete({
-      where: {
-        id: todoId,
-        userId: userId,
-      },
-    });
+    const [todo] = await db
+      .delete(todos)
+      .where(and(eq(todos.id, todoId), eq(todos.userId, userId)))
+      .returning();
+
+    if (!todo) {
+      throw new ResponseError(500, "Failed to delete todo");
+    }
 
     return toTodoResponse(todo);
   }
 
   public static async findTodos(): Promise<TodoResponse[]> {
-    const todos = await prisma.todo.findMany();
-    return todos.map((todo) => toTodoResponse(todo));
+    const allTodos = await db.select().from(todos);
+    return allTodos.map((todo) => toTodoResponse(todo));
   }
 
   public static async findTodoById(
     todoId: number,
   ): Promise<TodoWithUserResponse> {
-    const todo = await prisma.todo.findUnique({
-      where: { id: todoId },
-      include: {
-        user: true, // Matches the relation name in schema.prisma
+    const todo = await db.query.todos.findFirst({
+      where: eq(todos.id, todoId),
+      with: {
+        user: true,
       },
     });
 

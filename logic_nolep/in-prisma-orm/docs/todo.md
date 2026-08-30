@@ -2,11 +2,11 @@
 
 ## Create Todo
 
-Endpoint : POST /api/:userId/todo
+Endpoint : POST `/api/:userId/todo`
 
 Request Body :
 
-```
+```json
 {
     "title": "Reading a book",
     "description": "Read The Intelligent Investor book By Benjamin Graham",
@@ -14,13 +14,13 @@ Request Body :
 }
 ```
 
-Response Body (Success) :
+Response Body (Success - 201 Created) :
 
-```
+```json
 {
     "message": "Todo added success",
     "data": {
-        "id": 3,
+        "id": 1,
         "title": "Reading a book",
         "description": "Read The Intelligent Investor book By Benjamin Graham",
         "status": "ACTIVE"
@@ -28,9 +28,9 @@ Response Body (Success) :
 }
 ```
 
-Response Body (Failed) :
+Response Body (Failed - 400 Bad Request) :
 
-```
+```json
 {
     "message": "Validation Error",
     "errors": {
@@ -39,23 +39,19 @@ Response Body (Failed) :
 }
 ```
 
-## Get Todo
+---
 
-Endpoint : GET /api/todos
+## Get All Todos
 
-Response Body (Success) :
+Endpoint : GET `/api/todos`
 
-```
+Response Body (Success - 201 Created) :
+
+```json
 {
     "data": [
         {
-            "id": 3,
-            "title": "Reading a book",
-            "description": "Read The Intelligent Investor book By Benjamin Graham",
-            "status": "ACTIVE"
-        },
-        {
-            "id": 4,
+            "id": 1,
             "title": "Reading a book",
             "description": "Read The Intelligent Investor book By Benjamin Graham",
             "status": "ACTIVE"
@@ -64,29 +60,31 @@ Response Body (Success) :
 }
 ```
 
-Response Body (Failed) :
+Response Body (Failed - 500 Internal Server Error) :
 
-```
+```json
 {
     "message": "Internal Server Error"
 }
 ```
 
+---
+
 ## Get Todo By Id
 
-Endpoint : GET /api/todos/:todoId
+Endpoint : GET `/api/todos/:todoId`
 
-Response Body (Success) :
+Response Body (Success - 201 Created) :
 
-```
+```json
 {
     "data": {
-        "id": 3,
+        "id": 1,
         "title": "Reading a book",
         "description": "Read The Intelligent Investor book By Benjamin Graham",
         "status": "ACTIVE",
         "user": {
-            "id": 4,
+            "id": 1,
             "name": "ayi",
             "email": "ayi@gmail.com",
             "phone": "08123456"
@@ -95,24 +93,26 @@ Response Body (Success) :
 }
 ```
 
-Response Body (Failed) :
+Response Body (Failed - 404 Not Found) :
 
-```
+```json
 {
     "message": "Not found",
     "errors": {
-        "todo": "Todo with id 4 not found"
+        "todo": "Todo with id 1 not found"
     }
 }
 ```
 
+---
+
 ## Update Todo
 
-Endpoint : PATCH /api/:userId/todo/:todoId
+Endpoint : PATCH `/api/:userId/todo/:todoId`
 
 Request Body :
 
-```
+```json
 {
     "title": "Reading a book",
     "description": "Read The Intelligent Investor book By Benjamin Graham",
@@ -120,13 +120,13 @@ Request Body :
 }
 ```
 
-Response Body (Success) :
+Response Body (Success - 201 Created) :
 
-```
+```json
 {
     "message": "Todo updated success",
     "data": {
-        "id": 3,
+        "id": 1,
         "title": "Reading a book",
         "description": "Read The Intelligent Investor book By Benjamin Graham",
         "status": "FINISH"
@@ -134,9 +134,9 @@ Response Body (Success) :
 }
 ```
 
-Response Body (Failed) :
+Response Body (Failed - 400 Bad Request) :
 
-```
+```json
 {
     "message": "Validation Error",
     "errors": {
@@ -145,25 +145,27 @@ Response Body (Failed) :
 }
 ```
 
+---
+
 ## Delete Todo
 
-Endpoint : DELETE /api/:userId/todo/:todoId
+Endpoint : DELETE `/api/:userId/todo/:todoId`
 
-Response Body (Success) :
+Response Body (Success - 201 Created) :
 
-```
+```json
 {
     "message": "Todo deleted success"
 }
 ```
 
-Response Body (Failed) :
+Response Body (Failed - 404 Not Found) :
 
-```
+```json
 {
     "message": "Not found",
     "errors": {
-        "todo": "Todo with id 3 not found"
+        "todo": "Todo with id 1 not found"
     }
 }
 ```

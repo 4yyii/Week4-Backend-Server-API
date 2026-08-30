@@ -1,6 +1,9 @@
-import { Todo } from "../../generated/prisma/client";
-import { Status } from "../../generated/prisma/enums";
+import { todos } from "../db/schema";
 import { toUserResponse, UserResponse } from "./user.model";
+
+export type Todo = typeof todos.$inferSelect;
+export type NewTodo = typeof todos.$inferInsert;
+export type Status = "FINISH" | "ACTIVE";
 
 export type TodoResponse = {
   id: number;
@@ -26,7 +29,7 @@ export function toTodoResponse(todo: Todo): TodoResponse {
     id: todo.id,
     title: todo.title,
     description: todo.description,
-    status: todo.status,
+    status: todo.status as Status,
   };
 }
 
